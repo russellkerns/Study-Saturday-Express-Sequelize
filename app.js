@@ -15,17 +15,27 @@ app.use(morgan('dev'));
 app.use('/students', students);
 app.use('/tests', tests);
 
+
+app.use((req, res) =>{
+  res.status(404).send('Page not found')
+})
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
+
+
+
+
+
 
 const init = async () => {
 
   if (require.main === module){
     //will only run when run with npm start and not with npm test to avoid db syncing in multiple threads when running tests
     try {
-      await db.sync();
+      await db.sync({force: true});
       app.listen(3000, () => {
         console.log('Server is listening on port 3000!');
       })
